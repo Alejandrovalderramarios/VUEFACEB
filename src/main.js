@@ -1,12 +1,30 @@
 import Vue from "vue";
-import App from "./App.vue";
-import router from "./router";
-import store from "./store";
 
-Vue.config.productionTip = false;
+// global stylesheet
+import "./style.css";
 
-new Vue({
+// setup fake backend
+import { fakeBackend } from "./_helpers";
+fakeBackend();
+
+import {
+  initFacebookSdk,
+  jwtInterceptor,
+  errorInterceptor,
   router,
-  store,
-  render: (h) => h(App),
-}).$mount("#app");
+} from "./_helpers";
+import App from "./App.vue";
+
+// enable interceptors for http requests
+jwtInterceptor();
+errorInterceptor();
+
+// wait for facebook sdk to start app
+initFacebookSdk().then(startApp);  //With this function works Facebool Sdk
+
+function startApp() {
+  new Vue({
+    router,
+    render: (h) => h(App),
+  }).$mount("#app");
+}
